@@ -3,7 +3,7 @@
   "type": "symfony-bundle",
   "description": "Symfony 3 language bundle to load translations from db",
   "keywords": [
-    "langage",
+    "langage"
   ],
   "homepage": "http://bednaczyk.me/language-bundle",
   "license": "Apache-2.0",
