@@ -73,7 +73,7 @@ class LanguageEntityListener
             return;
         }
 
-        $this->container->get("bordeux.language.manager")->generateLanguageFiles();
+        $this->container->get("bordeux.language.cache.languageWarmer")->warmUp('');
     }
 
 }

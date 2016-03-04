@@ -37,8 +37,26 @@ class LanguageCacheWarmer extends CacheWarmer
      */
     public function warmUp($cacheDir)
     {
-        $this->container
-            ->get("bordeux.language.manager")
-            ->generateLanguageFiles();
+        $kernel = $this->container->get('kernel');
+        $path = $kernel->locateResource('@BordeuxLanguageBundle/Resources/translations');
+
+
+        $finder = (new \Symfony\Component\Finder\Finder())->in($path)->contains(".xv");
+
+
+        /** @var \SplFileInfo $file */
+        foreach ($finder->files() as $file) {
+            @unlink($file->getRealPath());
+        }
+
+
+        foreach ($this->getLanguagesList() as $language) {
+            file_put_contents(
+                $path . DIRECTORY_SEPARATOR . "messages.{$language->getLocale()}.xv",
+                "hello"
+            );
+        }
+
+        return true;
     }
 }

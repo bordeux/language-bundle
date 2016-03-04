@@ -227,34 +227,5 @@ class LanguageManager
     }
 
 
-    /**
-     * @author Krzysztof Bednarczyk
-     * @return bool
-     */
-    public function generateLanguageFiles($reload = true)
-    {
-
-        $kernel = $this->container->get('kernel');
-        $path = $kernel->locateResource('@BordeuxLanguageBundle/Resources/translations');
-
-
-        $finder = (new \Symfony\Component\Finder\Finder())->in($path)->contains(".xv");
-
-
-        /** @var \SplFileInfo $file */
-        foreach ($finder->files() as $file) {
-            @unlink($file->getRealPath());
-        }
-
-
-        foreach ($this->getLanguagesList($reload) as $language) {
-            file_put_contents(
-                $path . DIRECTORY_SEPARATOR . "messages.{$language->getLocale()}.xv",
-                "hello"
-            );
-        }
-
-        return $this->clearTranslationCache();
-    }
 }
 
