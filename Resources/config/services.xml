@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+
+    <parameters>
+        <parameter key="translator.class">Bordeux\LanguageBundle\Translation\Translator</parameter>
+    </parameters>
+    <services>
+
+
+        <service id="bordeux.language.translator.loader.xv"
+                 class="Bordeux\LanguageBundle\Translation\Loader\XvLoader">
+            <argument type="service" id="doctrine"/>
+
+            <tag name="translation.loader" alias="xv"/>
+        </service>
+
+        <service id="bordeux.language.console.currency.refresher"
+                 class="Bordeux\LanguageBundle\Console\RefreshCurrencyCommand">
+            <tag name="console.command"/>
+        </service>
+
+        <service id="bordeux.language.currency.refresher"
+                 class="Bordeux\LanguageBundle\Service\CurrencyRefresher">
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="bordeux.language.manager"
+                 class="Bordeux\LanguageBundle\Service\LanguageManager">
+            <argument type="service" id="service_container"/>
+        </service>
+
+
+        <service id="bordeux.language.twig.price.calculator"
+                 class="Bordeux\LanguageBundle\Twig\PriceCalculatorExtension" public="false">
+            <tag name="twig.extension"/>
+            <call method="setLanguageManager">
+                <argument type="service" id="bordeux.language.manager"/>
+            </call>
+        </service>
+
+        <service id="bordeux.language.listener.kernel"
+                 class="Bordeux\LanguageBundle\EventListener\KernelListener">
+            <tag name="kernel.event_listener" event="kernel.request" method="onKernelRequest" priority="-20"/>
+            <tag name="kernel.event_listener" event="kernel.terminate" method="onKernelTerminate"/>
+            <argument id="service_container" type="service"/>
+        </service>
+
+        <service id="bordeux.language.listener.entity.language"
+                 class="Bordeux\LanguageBundle\EventListener\LanguageEntityListener">
+            <tag name="doctrine.event_listener" event="postUpdate" method="postUpdate"/>
+            <tag name="doctrine.event_listener" event="postDelete" method="postDelete"/>
+            <tag name="doctrine.event_listener" event="postPersist" method="postPersist"/>
+
+
+            <argument id="service_container" type="service"/>
+        </service>
+
+
+        <service id="sonata.admin.bordeux.language" class="Bordeux\LanguageBundle\Admin\LanguageAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="System" label="Language"/>
+            <argument/>
+            <argument>Bordeux\LanguageBundle\Entity\Language</argument>
+            <argument>BordeuxLanguageBundle:Admin/Language</argument>
+
+            <call method="addChild">
+                <argument type="service" id="sonata.admin.bordeux.language.translation"/>
+            </call>
+        </service>
+
+        <service id="sonata.admin.bordeux.language.translation"
+                 class="Bordeux\LanguageBundle\Admin\LanguageTranslationAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="System" label="Translations" show_in_dashboard="false"/>
+            <argument/>
+            <argument>Bordeux\Bundle\LanguageBundle\Entity\LanguageTranslation</argument>
+            <argument>BordeuxLanguageBundle:Admin/LanguageTranslation</argument>
+        </service>
+
+
+        <service id="sonata.admin.bordeux.language.currency" class="Bordeux\LanguageBundle\Admin\CurrencyAdmin">
+            <tag name="sonata.admin" manager_type="orm" group="System" label="Currency"/>
+            <argument/>
+            <argument>Bordeux\LanguageBundle\Entity\Currency</argument>
+            <argument>BordeuxLanguageBundle:Admin/Currency</argument>
+        </service>
+
+
+    </services>
+
+</container>
