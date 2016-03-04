@@ -17,6 +17,16 @@
             <tag name="translation.loader" alias="xv"/>
         </service>
 
+
+        <service id="bordeux.language.cache.languageWarmer"
+                 class="Bordeux\LanguageBundle\Cache\LanguageCacheWarmer">
+            <tag name="kernel.cache_warmer"/>
+
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
         <service id="bordeux.language.console.currency.refresher"
                  class="Bordeux\LanguageBundle\Console\RefreshCurrencyCommand">
             <tag name="console.command"/>
