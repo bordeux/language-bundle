@@ -11,37 +11,12 @@ namespace Bordeux\LanguageBundle\Twig;
 
 use Bordeux\LanguageBundle\Entity\Money;
 use Bordeux\LanguageBundle\Service\LanguageManager;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class PriceCalculatorExtension extends \Twig_Extension
 {
 
-    /**
-     * @var LanguageManager
-     */
-    protected $languageManager;
-
-
-    /**
-     * Get languageManager value
-     * @author Krzysztof Bednarczyk
-     * @return LanguageManager
-     */
-    public function getLanguageManager()
-    {
-        return $this->languageManager;
-    }
-
-    /**
-     * Set languageManager value
-     * @author Krzysztof Bednarczyk
-     * @param LanguageManager $languageManager
-     * @return  $this
-     */
-    public function setLanguageManager($languageManager)
-    {
-        $this->languageManager = $languageManager;
-        return $this;
-    }
+    use ContainerAwareTrait;
 
     /**
      * @author Krzysztof Bednarczyk
@@ -65,7 +40,7 @@ class PriceCalculatorExtension extends \Twig_Extension
             return null;
         }
 
-        $currency = $this->languageManager->getCurrentLanguage()->getCurrency();
+        $currency = $this->container->get('bordeux.language.manager')->getCurrentLanguage()->getCurrency();
 
         if ($money->getCurrency()->getId() === $currency->getId()) {
             return $money->format();

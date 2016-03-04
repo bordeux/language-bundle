@@ -48,8 +48,8 @@
         <service id="bordeux.language.twig.price.calculator"
                  class="Bordeux\LanguageBundle\Twig\PriceCalculatorExtension" public="false">
             <tag name="twig.extension"/>
-            <call method="setLanguageManager">
-                <argument type="service" id="bordeux.language.manager"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
             </call>
         </service>
 
