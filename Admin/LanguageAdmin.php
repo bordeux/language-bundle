@@ -60,7 +60,7 @@ class LanguageAdmin extends Admin
         $this->getConfigurationPool()
             ->getContainer()
             ->get("bordeux.language.manager")
-            ->clearTranslationCache()
+            ->generateLanguageFiles()
             ->clearLanguageList();
     }
 

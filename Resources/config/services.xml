@@ -18,18 +18,7 @@
         </service>
 
 
-        <!--
-        <service id="bordeux.language.cache.languageWarmer"
-                 class="Bordeux\LanguageBundle\Cache\LanguageCacheWarmer">
-            <tag name="kernel.cache_warmer"/>
 
-            <call method="setContainer">
-                <argument type="service" id="service_container"/>
-            </call>
-        </service>
-        -->
-
-        
         <service id="bordeux.language.console.currency.refresher"
                  class="Bordeux\LanguageBundle\Console\RefreshCurrencyCommand">
             <tag name="console.command"/>
@@ -63,13 +52,6 @@
             <argument id="service_container" type="service"/>
         </service>
 
-
-        <service id="bordeux.language.listener.entity.language"
-                 class="Bordeux\LanguageBundle\EventListener\LanguageEntityListener">
-            <tag name="doctrine.event_listener" event="postDelete" method="postDelete"/>
-            <tag name="doctrine.event_listener" event="postPersist" method="postPersist"/>
-            <argument id="service_container" type="service"/>
-        </service>
 
 
         <service id="sonata.admin.bordeux.language" class="Bordeux\LanguageBundle\Admin\LanguageAdmin">
