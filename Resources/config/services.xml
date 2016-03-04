@@ -69,7 +69,7 @@
                  class="Bordeux\LanguageBundle\Admin\LanguageTranslationAdmin">
             <tag name="sonata.admin" manager_type="orm" group="System" label="Translations" show_in_dashboard="false"/>
             <argument/>
-            <argument>Bordeux\Bundle\LanguageBundle\Entity\LanguageTranslation</argument>
+            <argument>Bordeux\LanguageBundle\Entity\LanguageTranslation</argument>
             <argument>BordeuxLanguageBundle:Admin/LanguageTranslation</argument>
         </service>
 
