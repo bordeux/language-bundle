@@ -124,6 +124,10 @@ class LanguageManager
     {
         $cacheDir = $this->translator->getOptions()['cache_dir'];
 
+        if(!file_exists($cacheDir)){
+            return $this;
+        }
+
         $finder = (new \Symfony\Component\Finder\Finder())->in($cacheDir);
         if ($language) {
             $finder = $finder->contains(".{$language->getLocale()}.");

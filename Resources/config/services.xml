@@ -24,6 +24,13 @@
             <tag name="console.command"/>
         </service>
 
+        <service id="bordeux.language.service.warmer"
+                 class="Bordeux\LanguageBundle\Service\LanguageFilesWarmer">
+            <argument type="service" id="bordeux.language.manager"/>
+            <tag name="kernel.cache_warmer"/>
+        </service>
+
+
         <service id="bordeux.language.currency.refresher"
                  class="Bordeux\LanguageBundle\Service\CurrencyRefresher">
             <call method="setContainer">
