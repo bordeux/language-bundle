@@ -71,23 +71,21 @@ class LanguageManager
     {
         $key = "language_list_cache";
 
-        if ($this->cache->contains($key) && !$reload) {
-            return $this->cache->fetch($key);
-        }
 
         /** @var Language[] $list */
         $list = $this->doctrine->getRepository("BordeuxLanguageBundle:Language")
             ->createQueryBuilder("l")
             ->join("l.currency", "c")->addSelect("c")
             ->getQuery()
+            ->setResultCacheId($key)
+            ->setResultCacheLifetime(360)
+            ->useResultCache(true)
             ->getResult();
 
         $newList = [];
         foreach ($list as $language) {
             $newList[$language->getLocale()] = $language;
         }
-
-        $this->cache->save($key, $newList, 3600);
 
         return $newList;
     }
