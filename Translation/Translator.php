@@ -14,5 +14,6 @@ class Translator extends \Symfony\Bundle\FrameworkBundle\Translation\Translator
     {
         return $this->options;
     }
+    
 }
 

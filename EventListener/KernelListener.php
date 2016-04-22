@@ -2,13 +2,13 @@
 
 namespace Bordeux\LanguageBundle\EventListener;
 
+use Bordeux\LanguageBundle\Translation\Translator;
+use Bordeux\LanguageBundle\User\UserLanguageInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
-use Bordeux\LanguageBundle\Entity\LanguageTranslation;
-use Bordeux\LanguageBundle\Translation\Translator;
-use Bordeux\UserBundle\Entity\User;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 
 /**
@@ -31,6 +31,11 @@ class KernelListener
     protected $manager;
 
     /**
+     * @var TokenStorage
+     */
+    protected $tokenStorage;
+
+    /**
      * KernelControllerListener constructor.
      * @author Krzysztof Bednarczyk
      * @param ContainerInterface $container
@@ -40,6 +45,7 @@ class KernelListener
         $this->setContainer($container);
         $this->translator = $this->container->get("translator");
         $this->manager = $this->container->get("bordeux.language.manager");
+        $this->tokenStorage = $this->container->get("security.token_storage");
     }
 
 
@@ -49,30 +55,45 @@ class KernelListener
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        if (!$event->isMasterRequest()) {
-            return;
-        }
-
         $request = $event->getRequest();
 
-        $token = $this->container->get("security.token_storage")->getToken();
+        $token = $this->tokenStorage->getToken();
 
 
-        /** @var User $user */
-        if ($token && ($user = $token->getUser()) && $user->getLanguage()) {
+        /**
+         * From auth
+         */
+        /** @var UserLanguageInterface $user */
+        if ($token && ($user = $token->getUser()) && ($user instanceof UserLanguageInterface) && $user->getLanguage()) {
             $request->setLocale(
                 $user->getLanguage()->getLocale()
             );
+
             $this->translator->setLocale($request->getLocale());
             return;
         }
 
-        $languages = $event->getRequest()->getLanguages();
+        /**
+         * Cookies
+         */
+        $cookieName = $this->container->getParameter("bordeux.language.cookie_name");
+        if ($request->cookies->has($cookieName)) {
+            $cookieLocale = $request->cookies->get($cookieName) ?: "none";
+            if ($this->manager->hasLocale($cookieLocale)) {
+                $this->translator->setLocale($cookieLocale);
+                return;
+            }
+        }
 
 
+        /**
+         * From browser header
+         */
+        $languages = $request->getLanguages();
         foreach ($languages as $locale) {
             if ($this->manager->hasLocale($locale)) {
                 $this->translator->setLocale($locale);
+                return;
             }
         }
 
@@ -90,13 +111,18 @@ class KernelListener
         }
 
 
+        if (!method_exists($this->translator, 'getCollectedMessages')) {
+            return;
+        }
+
+
         $messages = $this->translator->getCollectedMessages();
         if (empty($messages)) {
             return;
         }
 
         $doctrine = $this->container->get("doctrine");
-        
+
         $doctrine->resetManager();
 
 

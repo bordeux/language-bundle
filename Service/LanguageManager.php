@@ -258,5 +258,14 @@ class LanguageManager
 
         return $this->clearTranslationCache();
     }
+
+
+    /**
+     * @return \Bordeux\LanguageBundle\Entity\Language[]
+     * @author Krzysztof Bednarczyk
+     */
+    public function getLanguages(){
+        return $this->languages;
+    }
 }
 

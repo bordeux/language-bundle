@@ -6,6 +6,7 @@
 
     <parameters>
         <parameter key="translator.class">Bordeux\LanguageBundle\Translation\Translator</parameter>
+        <parameter key="bordeux.language.cookie_name">xv_language</parameter>
     </parameters>
     <services>
 
