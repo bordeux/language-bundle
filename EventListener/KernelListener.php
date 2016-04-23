@@ -121,12 +121,7 @@ class KernelListener
             return;
         }
 
-        $doctrine = $this->container->get("doctrine");
 
-        $doctrine->resetManager();
-
-
-        //->resetEntityManager();
 
         $languagesToClear = [];
         foreach ($messages as $message) {

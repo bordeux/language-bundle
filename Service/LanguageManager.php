@@ -33,9 +33,9 @@ class LanguageManager
 
 
     /**
-     * @var \Doctrine\Bundle\DoctrineBundle\Registry
+     * @var \Doctrine\ORM\EntityManager
      */
-    protected $doctrine;
+    protected $em;
 
 
     /**
@@ -56,7 +56,7 @@ class LanguageManager
     public function __construct(ContainerInterface $containerInterface)
     {
         $this->setContainer($containerInterface);
-        $this->doctrine = $this->container->get("doctrine");
+        $this->em = $this->container->get("doctrine")->getManager();
         $this->cache = $this->container->get("cache");
         $this->languages = $this->getLanguagesList();
         $this->translator = $this->container->get("translator");
@@ -73,7 +73,7 @@ class LanguageManager
 
 
         /** @var Language[] $list */
-        $list = $this->doctrine->getRepository("BordeuxLanguageBundle:Language")
+        $list = $this->em->getRepository("BordeuxLanguageBundle:Language")
             ->createQueryBuilder("l")
             ->join("l.currency", "c")->addSelect("c")
             ->getQuery()
@@ -122,7 +122,7 @@ class LanguageManager
     {
         $cacheDir = $this->translator->getOptions()['cache_dir'];
 
-        if(!file_exists($cacheDir)){
+        if (!file_exists($cacheDir)) {
             return $this;
         }
 
@@ -179,22 +179,36 @@ class LanguageManager
     public function createTranslation(Language $language, $token, $domain)
     {
 
-        $translation = new LanguageTranslation();
-        $translation->setLanguage($language->getAlias() ?: $language);
-        $translation->setTranslation($token);
-        $translation->setLanguageToken($this->getToken(
-            $token
-        ));
-
-
-        $em = $this->doctrine->getManager();
         try {
-            $em->persist($translation);
-            $em->flush([
+
+            if (!$this->em->isOpen()) {
+                $this->em = $this->em->create(
+                    $this->em->getConnection(),
+                    $this->em->getConfiguration()
+                );
+            }
+
+            $language = $this->em->getRepository(
+                "BordeuxLanguageBundle:Language"
+            )->find($language->getId());
+
+            $translation = new LanguageTranslation();
+            $translation->setLanguage($language->getAlias() ?: $language);
+            $translation->setTranslation($token);
+            $translation->setLanguageToken($this->getToken(
+                $token
+            ));
+            $translation->setDomain($domain);
+
+
+            $this->em->persist($translation);
+            $this->em->flush([
                 $translation
             ]);
+
+
         } catch (\Exception $e) {
-            $em->detach($translation);
+            return false;
         }
 
 
@@ -209,7 +223,7 @@ class LanguageManager
      */
     public function getToken($id)
     {
-        $token = $this->doctrine
+        $token = $this->em
             ->getRepository("BordeuxLanguageBundle:LanguageToken")
             ->findOneBy([
                 "token" => $id
@@ -220,9 +234,8 @@ class LanguageManager
 
         $token = new LanguageToken();
         $token->setToken($id);
-        $em = $this->doctrine->getManager();
-        $em->persist($token);
-        $em->flush([
+        $this->em->persist($token);
+        $this->em->flush([
             $token
         ]);
         return $token;
@@ -264,7 +277,8 @@ class LanguageManager
      * @return \Bordeux\LanguageBundle\Entity\Language[]
      * @author Krzysztof Bednarczyk
      */
-    public function getLanguages(){
+    public function getLanguages()
+    {
         return $this->languages;
     }
 }
