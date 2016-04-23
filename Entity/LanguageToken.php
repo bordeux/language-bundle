@@ -24,9 +24,17 @@ class LanguageToken
     /**
      * @var string
      *
-     * @ORM\Column(name="token", type="string", length=255, unique=true)
+     * @ORM\Column(name="token", type="string", length=255)
      */
     private $token;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="token_md5", type="string", length=33, unique=true)
+     */
+    private $tokenMd5;
 
 
     /**
@@ -59,6 +67,8 @@ class LanguageToken
     {
         $this->token = $token;
 
+        $this->tokenMd5 = md5($token);
+        
         return $this;
     }
 
@@ -81,6 +91,16 @@ class LanguageToken
     {
         return $this->translations;
     }
+
+    /**
+     * @author Krzysztof Bednarczyk
+     * @return string
+     */
+    public function getTokenMd5()
+    {
+        return $this->tokenMd5;
+    }
+
 
 
 

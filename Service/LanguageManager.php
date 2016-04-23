@@ -223,10 +223,12 @@ class LanguageManager
      */
     public function getToken($id)
     {
+        $md5 = md5($id);
+        
         $token = $this->em
             ->getRepository("BordeuxLanguageBundle:LanguageToken")
             ->findOneBy([
-                "token" => $id
+                "tokenMd5" => $md5
             ]);
         if ($token) {
             return $token;
