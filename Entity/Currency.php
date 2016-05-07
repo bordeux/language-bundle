@@ -3,7 +3,6 @@
 namespace Bordeux\LanguageBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Tattool\Bundle\XVBundle\Classes\Doctrine\TraitLogEntity;
 
 
 /**
@@ -15,7 +14,6 @@ use Tattool\Bundle\XVBundle\Classes\Doctrine\TraitLogEntity;
  */
 class Currency
 {
-    use TraitLogEntity;
 
     /**
      * @var int

@@ -3,8 +3,6 @@
 namespace Bordeux\LanguageBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Psr\Log\LoggerTrait;
-use Bordeux\XVBundle\Classes\Doctrine\TraitLogEntity;
 
 /**
  * Language
