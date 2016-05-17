@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\PostResponseEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Translation\DataCollectorTranslator;
 
 
 /**
@@ -125,9 +126,13 @@ class KernelListener
 
         $languagesToClear = [];
         foreach ($messages as $message) {
-            if ($message['state'] !== 1) {
+            if(!in_array($message['state'], [
+                DataCollectorTranslator::MESSAGE_MISSING,
+                DataCollectorTranslator::MESSAGE_EQUALS_FALLBACK,
+            ])){
                 continue;
             }
+            
 
             if (!$this->manager->hasLocale($message['locale'])) {
                 continue;
