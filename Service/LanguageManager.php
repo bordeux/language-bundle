@@ -39,7 +39,7 @@ class LanguageManager
 
 
     /**
-     * @var string
+     * @var Language
      */
     protected $defaultLanguage = "en";
 
@@ -76,6 +76,7 @@ class LanguageManager
         $list = $this->em->getRepository("BordeuxLanguageBundle:Language")
             ->createQueryBuilder("l")
             ->join("l.currency", "c")->addSelect("c")
+            ->orderBy("l.id", "ASC")
             ->getQuery()
             ->setResultCacheId($key)
             ->setResultCacheLifetime(360)
@@ -83,6 +84,7 @@ class LanguageManager
             ->getResult();
 
         $newList = [];
+        $this->defaultLanguage = reset($language);
         foreach ($list as $language) {
             $newList[$language->getLocale()] = $language;
         }
@@ -90,6 +92,14 @@ class LanguageManager
         return $newList;
     }
 
+
+    /**
+     * @return Language
+     * @author Krzysztof Bednarczyk
+     */
+    public function getDefaultLanguage(){
+        return $this->defaultLanguage;
+    }
 
     /**
      * @author Krzysztof Bednarczyk
@@ -154,7 +164,7 @@ class LanguageManager
      */
     public function getLanguage($locale)
     {
-        return isset($this->languages[$locale]) ? $this->languages[$locale] : $this->languages[$this->defaultLanguage];
+        return isset($this->languages[$locale]) ? $this->languages[$locale] : $this->languages[$this->defaultLanguage->getLocale()];
     }
 
     /**

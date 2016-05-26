@@ -97,7 +97,7 @@ class KernelListener
                 return;
             }
         }
-
+        
     }
 
     /**
@@ -126,13 +126,13 @@ class KernelListener
 
         $languagesToClear = [];
         foreach ($messages as $message) {
-            if(!in_array($message['state'], [
+            if(!in_array((int) $message['state'], [
                 DataCollectorTranslator::MESSAGE_MISSING,
                 DataCollectorTranslator::MESSAGE_EQUALS_FALLBACK,
             ])){
                 continue;
             }
-            
+
 
             if (!$this->manager->hasLocale($message['locale'])) {
                 continue;
