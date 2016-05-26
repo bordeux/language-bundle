@@ -58,6 +58,10 @@ class KernelListener
     {
         $request = $event->getRequest();
 
+        if(!$event->isMasterRequest()){
+            return;
+        }
+
         $token = $this->tokenStorage->getToken();
 
 
@@ -81,7 +85,8 @@ class KernelListener
         if ($request->cookies->has($cookieName)) {
             $cookieLocale = $request->cookies->get($cookieName) ?: "none";
             if ($this->manager->hasLocale($cookieLocale)) {
-                $this->translator->setLocale($cookieLocale);
+                $request->setLocale($cookieLocale);
+                $this->translator->setLocale($request->getLocale());
                 return;
             }
         }
@@ -93,11 +98,12 @@ class KernelListener
         $languages = $request->getLanguages();
         foreach ($languages as $locale) {
             if ($this->manager->hasLocale($locale)) {
-                $this->translator->setLocale($locale);
+                $request->setLocale($locale);
+                $this->translator->setLocale($request->getLocale());
                 return;
             }
         }
-        
+
     }
 
     /**
