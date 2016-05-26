@@ -84,7 +84,7 @@ class LanguageManager
             ->getResult();
 
         $newList = [];
-        $this->defaultLanguage = reset($language);
+        $this->defaultLanguage = reset($list);
         foreach ($list as $language) {
             $newList[$language->getLocale()] = $language;
         }
