@@ -33,7 +33,7 @@ class Money
      * @var Currency
      *
      * @ORM\ManyToOne(targetEntity="Bordeux\LanguageBundle\Entity\Currency")
-     * @ORM\JoinColumn(name="currency_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="currency_id", referencedColumnName="id", nullable=false)
      */
     private $currency;
 
@@ -115,7 +115,7 @@ class Money
 
     function __toString()
     {
-        return (string)$this->amount;
+        return (string)$this->format();
     }
 
 

@@ -331,11 +331,14 @@ class Currency
         $converted = new Money();
         $converted->setCurrency($this);
 
-        $converted->setAmount(
-            $money->getAmount() *
-            ( $this->getValue() / $money->getCurrency()->getValue())
-        );
+        $result = $money->getAmount() *
+            ( $this->getValue() / $money->getCurrency()->getValue());
 
+
+        $converted->setAmount(
+            round($result, (int) $this->decimals)
+        );
+        
         return $converted;
     }
 
