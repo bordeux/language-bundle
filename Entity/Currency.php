@@ -336,7 +336,7 @@ class Currency
 
 
         $converted->setAmount(
-            round($result, (int) $this->decimals)
+            round($result, 4)
         );
         
         return $converted;
